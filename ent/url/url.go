@@ -19,8 +19,17 @@ const (
 	FieldExpireAt = "expire_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// EdgeLogs holds the string denoting the logs edge name in mutations.
+	EdgeLogs = "logs"
 	// Table holds the table name of the url in the database.
 	Table = "url"
+	// LogsTable is the table that holds the logs relation/edge.
+	LogsTable = "log"
+	// LogsInverseTable is the table name for the VisitLog entity.
+	// It exists in this package in order to avoid circular dependency with the "visitlog" package.
+	LogsInverseTable = "log"
+	// LogsColumn is the table column denoting the logs relation/edge.
+	LogsColumn = "url_logs"
 )
 
 // Columns holds all SQL columns for url fields.

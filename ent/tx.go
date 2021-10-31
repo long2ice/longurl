@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Url is the client for interacting with the Url builders.
 	Url *UrlClient
+	// VisitLog is the client for interacting with the VisitLog builders.
+	VisitLog *VisitLogClient
 
 	// lazily loaded.
 	client     *Client
@@ -150,6 +152,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Url = NewUrlClient(tx.config)
+	tx.VisitLog = NewVisitLogClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

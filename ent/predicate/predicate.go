@@ -8,3 +8,6 @@ import (
 
 // Url is the predicate function for url builders.
 type Url func(*sql.Selector)
+
+// VisitLog is the predicate function for visitlog builders.
+type VisitLog func(*sql.Selector)

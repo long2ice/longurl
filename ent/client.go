@@ -10,9 +10,11 @@ import (
 	"long2ice/longurl/ent/migrate"
 
 	"long2ice/longurl/ent/url"
+	"long2ice/longurl/ent/visitlog"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -22,6 +24,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Url is the client for interacting with the Url builders.
 	Url *UrlClient
+	// VisitLog is the client for interacting with the VisitLog builders.
+	VisitLog *VisitLogClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -36,6 +40,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Url = NewUrlClient(c.config)
+	c.VisitLog = NewVisitLogClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -67,9 +72,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Url:    NewUrlClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Url:      NewUrlClient(cfg),
+		VisitLog: NewVisitLogClient(cfg),
 	}, nil
 }
 
@@ -87,8 +93,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		config: cfg,
-		Url:    NewUrlClient(cfg),
+		config:   cfg,
+		Url:      NewUrlClient(cfg),
+		VisitLog: NewVisitLogClient(cfg),
 	}, nil
 }
 
@@ -119,6 +126,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Url.Use(hooks...)
+	c.VisitLog.Use(hooks...)
 }
 
 // UrlClient is a client for the Url schema.
@@ -206,7 +214,129 @@ func (c *UrlClient) GetX(ctx context.Context, id int) *Url {
 	return obj
 }
 
+// QueryLogs queries the logs edge of a Url.
+func (c *UrlClient) QueryLogs(u *Url) *VisitLogQuery {
+	query := &VisitLogQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(url.Table, url.FieldID, id),
+			sqlgraph.To(visitlog.Table, visitlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, url.LogsTable, url.LogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UrlClient) Hooks() []Hook {
 	return c.hooks.Url
+}
+
+// VisitLogClient is a client for the VisitLog schema.
+type VisitLogClient struct {
+	config
+}
+
+// NewVisitLogClient returns a client for the VisitLog from the given config.
+func NewVisitLogClient(c config) *VisitLogClient {
+	return &VisitLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `visitlog.Hooks(f(g(h())))`.
+func (c *VisitLogClient) Use(hooks ...Hook) {
+	c.hooks.VisitLog = append(c.hooks.VisitLog, hooks...)
+}
+
+// Create returns a create builder for VisitLog.
+func (c *VisitLogClient) Create() *VisitLogCreate {
+	mutation := newVisitLogMutation(c.config, OpCreate)
+	return &VisitLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VisitLog entities.
+func (c *VisitLogClient) CreateBulk(builders ...*VisitLogCreate) *VisitLogCreateBulk {
+	return &VisitLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VisitLog.
+func (c *VisitLogClient) Update() *VisitLogUpdate {
+	mutation := newVisitLogMutation(c.config, OpUpdate)
+	return &VisitLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VisitLogClient) UpdateOne(vl *VisitLog) *VisitLogUpdateOne {
+	mutation := newVisitLogMutation(c.config, OpUpdateOne, withVisitLog(vl))
+	return &VisitLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VisitLogClient) UpdateOneID(id int) *VisitLogUpdateOne {
+	mutation := newVisitLogMutation(c.config, OpUpdateOne, withVisitLogID(id))
+	return &VisitLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VisitLog.
+func (c *VisitLogClient) Delete() *VisitLogDelete {
+	mutation := newVisitLogMutation(c.config, OpDelete)
+	return &VisitLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *VisitLogClient) DeleteOne(vl *VisitLog) *VisitLogDeleteOne {
+	return c.DeleteOneID(vl.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *VisitLogClient) DeleteOneID(id int) *VisitLogDeleteOne {
+	builder := c.Delete().Where(visitlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VisitLogDeleteOne{builder}
+}
+
+// Query returns a query builder for VisitLog.
+func (c *VisitLogClient) Query() *VisitLogQuery {
+	return &VisitLogQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a VisitLog entity by its id.
+func (c *VisitLogClient) Get(ctx context.Context, id int) (*VisitLog, error) {
+	return c.Query().Where(visitlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VisitLogClient) GetX(ctx context.Context, id int) *VisitLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryURL queries the url edge of a VisitLog.
+func (c *VisitLogClient) QueryURL(vl *VisitLog) *URLQuery {
+	query := &URLQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := vl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(visitlog.Table, visitlog.FieldID, id),
+			sqlgraph.To(url.Table, url.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, visitlog.URLTable, visitlog.URLColumn),
+		)
+		fromV = sqlgraph.Neighbors(vl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VisitLogClient) Hooks() []Hook {
+	return c.hooks.VisitLog
 }

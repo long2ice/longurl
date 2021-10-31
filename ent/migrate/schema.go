@@ -23,14 +23,48 @@ var (
 		Columns:    URLColumns,
 		PrimaryKey: []*schema.Column{URLColumns[0]},
 	}
+	// LogColumns holds the columns for the "log" table.
+	LogColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "platform", Type: field.TypeString},
+		{Name: "os", Type: field.TypeString},
+		{Name: "engine_name", Type: field.TypeString},
+		{Name: "engine_version", Type: field.TypeString},
+		{Name: "browser_name", Type: field.TypeString},
+		{Name: "browser_version", Type: field.TypeString},
+		{Name: "mozilla", Type: field.TypeString},
+		{Name: "bot", Type: field.TypeBool},
+		{Name: "mobile", Type: field.TypeBool},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "url_logs", Type: field.TypeInt, Nullable: true},
+	}
+	// LogTable holds the schema information for the "log" table.
+	LogTable = &schema.Table{
+		Name:       "log",
+		Columns:    LogColumns,
+		PrimaryKey: []*schema.Column{LogColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "log_url_logs",
+				Columns:    []*schema.Column{LogColumns[11]},
+				RefColumns: []*schema.Column{URLColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		URLTable,
+		LogTable,
 	}
 )
 
 func init() {
 	URLTable.Annotation = &entsql.Annotation{
 		Table: "url",
+	}
+	LogTable.ForeignKeys[0].RefTable = URLTable
+	LogTable.Annotation = &entsql.Annotation{
+		Table: "log",
 	}
 }

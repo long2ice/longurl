@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"long2ice/longurl/ent/url"
+	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -58,6 +59,21 @@ func (uc *URLCreate) SetNillableCreatedAt(t *time.Time) *URLCreate {
 		uc.SetCreatedAt(*t)
 	}
 	return uc
+}
+
+// AddLogIDs adds the "logs" edge to the VisitLog entity by IDs.
+func (uc *URLCreate) AddLogIDs(ids ...int) *URLCreate {
+	uc.mutation.AddLogIDs(ids...)
+	return uc
+}
+
+// AddLogs adds the "logs" edges to the VisitLog entity.
+func (uc *URLCreate) AddLogs(v ...*VisitLog) *URLCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uc.AddLogIDs(ids...)
 }
 
 // Mutation returns the URLMutation object of the builder.
@@ -216,6 +232,25 @@ func (uc *URLCreate) createSpec() (*Url, *sqlgraph.CreateSpec) {
 			Column: url.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
+	}
+	if nodes := uc.mutation.LogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

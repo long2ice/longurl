@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"long2ice/longurl/ent/predicate"
 	"long2ice/longurl/ent/url"
+	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -73,9 +74,45 @@ func (uu *URLUpdate) SetNillableCreatedAt(t *time.Time) *URLUpdate {
 	return uu
 }
 
+// AddLogIDs adds the "logs" edge to the VisitLog entity by IDs.
+func (uu *URLUpdate) AddLogIDs(ids ...int) *URLUpdate {
+	uu.mutation.AddLogIDs(ids...)
+	return uu
+}
+
+// AddLogs adds the "logs" edges to the VisitLog entity.
+func (uu *URLUpdate) AddLogs(v ...*VisitLog) *URLUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uu.AddLogIDs(ids...)
+}
+
 // Mutation returns the URLMutation object of the builder.
 func (uu *URLUpdate) Mutation() *URLMutation {
 	return uu.mutation
+}
+
+// ClearLogs clears all "logs" edges to the VisitLog entity.
+func (uu *URLUpdate) ClearLogs() *URLUpdate {
+	uu.mutation.ClearLogs()
+	return uu
+}
+
+// RemoveLogIDs removes the "logs" edge to VisitLog entities by IDs.
+func (uu *URLUpdate) RemoveLogIDs(ids ...int) *URLUpdate {
+	uu.mutation.RemoveLogIDs(ids...)
+	return uu
+}
+
+// RemoveLogs removes "logs" edges to VisitLog entities.
+func (uu *URLUpdate) RemoveLogs(v ...*VisitLog) *URLUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uu.RemoveLogIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -205,6 +242,60 @@ func (uu *URLUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: url.FieldCreatedAt,
 		})
 	}
+	if uu.mutation.LogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedLogsIDs(); len(nodes) > 0 && !uu.mutation.LogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.LogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{url.Label}
@@ -270,9 +361,45 @@ func (uuo *URLUpdateOne) SetNillableCreatedAt(t *time.Time) *URLUpdateOne {
 	return uuo
 }
 
+// AddLogIDs adds the "logs" edge to the VisitLog entity by IDs.
+func (uuo *URLUpdateOne) AddLogIDs(ids ...int) *URLUpdateOne {
+	uuo.mutation.AddLogIDs(ids...)
+	return uuo
+}
+
+// AddLogs adds the "logs" edges to the VisitLog entity.
+func (uuo *URLUpdateOne) AddLogs(v ...*VisitLog) *URLUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uuo.AddLogIDs(ids...)
+}
+
 // Mutation returns the URLMutation object of the builder.
 func (uuo *URLUpdateOne) Mutation() *URLMutation {
 	return uuo.mutation
+}
+
+// ClearLogs clears all "logs" edges to the VisitLog entity.
+func (uuo *URLUpdateOne) ClearLogs() *URLUpdateOne {
+	uuo.mutation.ClearLogs()
+	return uuo
+}
+
+// RemoveLogIDs removes the "logs" edge to VisitLog entities by IDs.
+func (uuo *URLUpdateOne) RemoveLogIDs(ids ...int) *URLUpdateOne {
+	uuo.mutation.RemoveLogIDs(ids...)
+	return uuo
+}
+
+// RemoveLogs removes "logs" edges to VisitLog entities.
+func (uuo *URLUpdateOne) RemoveLogs(v ...*VisitLog) *URLUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uuo.RemoveLogIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -425,6 +552,60 @@ func (uuo *URLUpdateOne) sqlSave(ctx context.Context) (_node *Url, err error) {
 			Value:  value,
 			Column: url.FieldCreatedAt,
 		})
+	}
+	if uuo.mutation.LogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedLogsIDs(); len(nodes) > 0 && !uuo.mutation.LogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.LogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   url.LogsTable,
+			Columns: []string{url.LogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: visitlog.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Url{config: uuo.config}
 	_spec.Assign = _node.assignValues

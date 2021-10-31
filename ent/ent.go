@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"long2ice/longurl/ent/url"
+	"long2ice/longurl/ent/visitlog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -29,7 +30,8 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		url.Table: url.ValidColumn,
+		url.Table:      url.ValidColumn,
+		visitlog.Table: visitlog.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

@@ -6,6 +6,9 @@ require (
 	entgo.io/ent v0.9.1
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gofiber/fiber/v2 v2.21.0
+	github.com/google/martian v2.1.0+incompatible
+	github.com/mssola/user_agent v0.5.3
+	github.com/sony/sonyflake v1.0.0
 	github.com/spf13/viper v1.9.0
 )
 
@@ -18,7 +21,6 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	github.com/sony/sonyflake v1.0.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

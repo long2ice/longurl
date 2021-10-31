@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -505,6 +506,34 @@ func CreatedAtLT(v time.Time) predicate.Url {
 func CreatedAtLTE(v time.Time) predicate.Url {
 	return predicate.Url(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
+	})
+}
+
+// HasLogs applies the HasEdge predicate on the "logs" edge.
+func HasLogs() predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LogsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LogsTable, LogsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLogsWith applies the HasEdge predicate on the "logs" edge with a given conditions (other predicates).
+func HasLogsWith(preds ...predicate.VisitLog) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LogsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LogsTable, LogsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

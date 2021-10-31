@@ -24,6 +24,27 @@ type Url struct {
 	ExpireAt *time.Time `json:"expire_at,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UrlQuery when eager-loading is set.
+	Edges UrlEdges `json:"edges"`
+}
+
+// UrlEdges holds the relations/edges for other nodes in the graph.
+type UrlEdges struct {
+	// Logs holds the value of the logs edge.
+	Logs []*VisitLog `json:"logs,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// LogsOrErr returns the Logs value or an error if the edge
+// was not loaded in eager-loading.
+func (e UrlEdges) LogsOrErr() ([]*VisitLog, error) {
+	if e.loadedTypes[0] {
+		return e.Logs, nil
+	}
+	return nil, &NotLoadedError{edge: "logs"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -86,6 +107,11 @@ func (u *Url) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryLogs queries the "logs" edge of the Url entity.
+func (u *Url) QueryLogs() *VisitLogQuery {
+	return (&UrlClient{config: u.config}).QueryLogs(u)
 }
 
 // Update returns a builder for updating this Url.

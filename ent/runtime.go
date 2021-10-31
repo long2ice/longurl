@@ -5,6 +5,7 @@ package ent
 import (
 	"long2ice/longurl/ent/schema"
 	"long2ice/longurl/ent/url"
+	"long2ice/longurl/ent/visitlog"
 	"time"
 )
 
@@ -26,4 +27,10 @@ func init() {
 	urlDescCreatedAt := urlFields[3].Descriptor()
 	// url.DefaultCreatedAt holds the default value on creation for the created_at field.
 	url.DefaultCreatedAt = urlDescCreatedAt.Default.(func() time.Time)
+	visitlogFields := schema.VisitLog{}.Fields()
+	_ = visitlogFields
+	// visitlogDescCreatedAt is the schema descriptor for created_at field.
+	visitlogDescCreatedAt := visitlogFields[9].Descriptor()
+	// visitlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	visitlog.DefaultCreatedAt = visitlogDescCreatedAt.Default.(func() time.Time)
 }
