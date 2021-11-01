@@ -20,6 +20,13 @@ func createVisitLog(c *fiber.Ctx, url *ent.Url) {
 	ua := user_agent.New(string(userAgent))
 	engineName, engineVersion := ua.Engine()
 	browserName, browserVersion := ua.Browser()
+	ips := c.IPs()
+	var ip string
+	if len(ips) > 0 {
+		ip = ips[0]
+	} else {
+		ip = c.IP()
+	}
 	_, err := db.Client.VisitLog.Create().
 		SetURL(url).
 		SetMobile(ua.Mobile()).
@@ -32,7 +39,7 @@ func createVisitLog(c *fiber.Ctx, url *ent.Url) {
 		SetBrowserName(browserName).
 		SetBrowserVersion(browserVersion).
 		SetReferer(string(c.Request().Header.Referer())).
-		SetIP(c.IP()).
+		SetIP(ip).
 		Save(c.Context())
 	if err != nil {
 		log.Errorf("Create visit log error: %v", err)
