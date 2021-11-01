@@ -604,6 +604,8 @@ type VisitLogMutation struct {
 	id              *int
 	platform        *string
 	os              *string
+	ip              *string
+	referer         *string
 	engine_name     *string
 	engine_version  *string
 	browser_name    *string
@@ -769,6 +771,78 @@ func (m *VisitLogMutation) OldOs(ctx context.Context) (v string, err error) {
 // ResetOs resets all changes to the "os" field.
 func (m *VisitLogMutation) ResetOs() {
 	m.os = nil
+}
+
+// SetIP sets the "ip" field.
+func (m *VisitLogMutation) SetIP(s string) {
+	m.ip = &s
+}
+
+// IP returns the value of the "ip" field in the mutation.
+func (m *VisitLogMutation) IP() (r string, exists bool) {
+	v := m.ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIP returns the old "ip" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIP: %w", err)
+	}
+	return oldValue.IP, nil
+}
+
+// ResetIP resets all changes to the "ip" field.
+func (m *VisitLogMutation) ResetIP() {
+	m.ip = nil
+}
+
+// SetReferer sets the "referer" field.
+func (m *VisitLogMutation) SetReferer(s string) {
+	m.referer = &s
+}
+
+// Referer returns the value of the "referer" field in the mutation.
+func (m *VisitLogMutation) Referer() (r string, exists bool) {
+	v := m.referer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReferer returns the old "referer" field's value of the VisitLog entity.
+// If the VisitLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VisitLogMutation) OldReferer(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldReferer is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldReferer requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReferer: %w", err)
+	}
+	return oldValue.Referer, nil
+}
+
+// ResetReferer resets all changes to the "referer" field.
+func (m *VisitLogMutation) ResetReferer() {
+	m.referer = nil
 }
 
 // SetEngineName sets the "engine_name" field.
@@ -1117,12 +1191,18 @@ func (m *VisitLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *VisitLogMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.platform != nil {
 		fields = append(fields, visitlog.FieldPlatform)
 	}
 	if m.os != nil {
 		fields = append(fields, visitlog.FieldOs)
+	}
+	if m.ip != nil {
+		fields = append(fields, visitlog.FieldIP)
+	}
+	if m.referer != nil {
+		fields = append(fields, visitlog.FieldReferer)
 	}
 	if m.engine_name != nil {
 		fields = append(fields, visitlog.FieldEngineName)
@@ -1160,6 +1240,10 @@ func (m *VisitLogMutation) Field(name string) (ent.Value, bool) {
 		return m.Platform()
 	case visitlog.FieldOs:
 		return m.Os()
+	case visitlog.FieldIP:
+		return m.IP()
+	case visitlog.FieldReferer:
+		return m.Referer()
 	case visitlog.FieldEngineName:
 		return m.EngineName()
 	case visitlog.FieldEngineVersion:
@@ -1189,6 +1273,10 @@ func (m *VisitLogMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldPlatform(ctx)
 	case visitlog.FieldOs:
 		return m.OldOs(ctx)
+	case visitlog.FieldIP:
+		return m.OldIP(ctx)
+	case visitlog.FieldReferer:
+		return m.OldReferer(ctx)
 	case visitlog.FieldEngineName:
 		return m.OldEngineName(ctx)
 	case visitlog.FieldEngineVersion:
@@ -1227,6 +1315,20 @@ func (m *VisitLogMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOs(v)
+		return nil
+	case visitlog.FieldIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIP(v)
+		return nil
+	case visitlog.FieldReferer:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReferer(v)
 		return nil
 	case visitlog.FieldEngineName:
 		v, ok := value.(string)
@@ -1338,6 +1440,12 @@ func (m *VisitLogMutation) ResetField(name string) error {
 		return nil
 	case visitlog.FieldOs:
 		m.ResetOs()
+		return nil
+	case visitlog.FieldIP:
+		m.ResetIP()
+		return nil
+	case visitlog.FieldReferer:
+		m.ResetReferer()
 		return nil
 	case visitlog.FieldEngineName:
 		m.ResetEngineName()

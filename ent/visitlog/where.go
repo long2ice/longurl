@@ -107,6 +107,20 @@ func Os(v string) predicate.VisitLog {
 	})
 }
 
+// IP applies equality check predicate on the "ip" field. It's identical to IPEQ.
+func IP(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIP), v))
+	})
+}
+
+// Referer applies equality check predicate on the "referer" field. It's identical to RefererEQ.
+func Referer(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldReferer), v))
+	})
+}
+
 // EngineName applies equality check predicate on the "engine_name" field. It's identical to EngineNameEQ.
 func EngineName(v string) predicate.VisitLog {
 	return predicate.VisitLog(func(s *sql.Selector) {
@@ -382,6 +396,228 @@ func OsEqualFold(v string) predicate.VisitLog {
 func OsContainsFold(v string) predicate.VisitLog {
 	return predicate.VisitLog(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldOs), v))
+	})
+}
+
+// IPEQ applies the EQ predicate on the "ip" field.
+func IPEQ(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIP), v))
+	})
+}
+
+// IPNEQ applies the NEQ predicate on the "ip" field.
+func IPNEQ(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIP), v))
+	})
+}
+
+// IPIn applies the In predicate on the "ip" field.
+func IPIn(vs ...string) predicate.VisitLog {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.VisitLog(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldIP), v...))
+	})
+}
+
+// IPNotIn applies the NotIn predicate on the "ip" field.
+func IPNotIn(vs ...string) predicate.VisitLog {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.VisitLog(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldIP), v...))
+	})
+}
+
+// IPGT applies the GT predicate on the "ip" field.
+func IPGT(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIP), v))
+	})
+}
+
+// IPGTE applies the GTE predicate on the "ip" field.
+func IPGTE(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIP), v))
+	})
+}
+
+// IPLT applies the LT predicate on the "ip" field.
+func IPLT(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIP), v))
+	})
+}
+
+// IPLTE applies the LTE predicate on the "ip" field.
+func IPLTE(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIP), v))
+	})
+}
+
+// IPContains applies the Contains predicate on the "ip" field.
+func IPContains(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldIP), v))
+	})
+}
+
+// IPHasPrefix applies the HasPrefix predicate on the "ip" field.
+func IPHasPrefix(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldIP), v))
+	})
+}
+
+// IPHasSuffix applies the HasSuffix predicate on the "ip" field.
+func IPHasSuffix(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldIP), v))
+	})
+}
+
+// IPEqualFold applies the EqualFold predicate on the "ip" field.
+func IPEqualFold(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldIP), v))
+	})
+}
+
+// IPContainsFold applies the ContainsFold predicate on the "ip" field.
+func IPContainsFold(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldIP), v))
+	})
+}
+
+// RefererEQ applies the EQ predicate on the "referer" field.
+func RefererEQ(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldReferer), v))
+	})
+}
+
+// RefererNEQ applies the NEQ predicate on the "referer" field.
+func RefererNEQ(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldReferer), v))
+	})
+}
+
+// RefererIn applies the In predicate on the "referer" field.
+func RefererIn(vs ...string) predicate.VisitLog {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.VisitLog(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldReferer), v...))
+	})
+}
+
+// RefererNotIn applies the NotIn predicate on the "referer" field.
+func RefererNotIn(vs ...string) predicate.VisitLog {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.VisitLog(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldReferer), v...))
+	})
+}
+
+// RefererGT applies the GT predicate on the "referer" field.
+func RefererGT(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldReferer), v))
+	})
+}
+
+// RefererGTE applies the GTE predicate on the "referer" field.
+func RefererGTE(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldReferer), v))
+	})
+}
+
+// RefererLT applies the LT predicate on the "referer" field.
+func RefererLT(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldReferer), v))
+	})
+}
+
+// RefererLTE applies the LTE predicate on the "referer" field.
+func RefererLTE(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldReferer), v))
+	})
+}
+
+// RefererContains applies the Contains predicate on the "referer" field.
+func RefererContains(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldReferer), v))
+	})
+}
+
+// RefererHasPrefix applies the HasPrefix predicate on the "referer" field.
+func RefererHasPrefix(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldReferer), v))
+	})
+}
+
+// RefererHasSuffix applies the HasSuffix predicate on the "referer" field.
+func RefererHasSuffix(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldReferer), v))
+	})
+}
+
+// RefererEqualFold applies the EqualFold predicate on the "referer" field.
+func RefererEqualFold(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldReferer), v))
+	})
+}
+
+// RefererContainsFold applies the ContainsFold predicate on the "referer" field.
+func RefererContainsFold(v string) predicate.VisitLog {
+	return predicate.VisitLog(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldReferer), v))
 	})
 }
 

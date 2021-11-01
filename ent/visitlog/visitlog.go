@@ -15,6 +15,10 @@ const (
 	FieldPlatform = "platform"
 	// FieldOs holds the string denoting the os field in the database.
 	FieldOs = "os"
+	// FieldIP holds the string denoting the ip field in the database.
+	FieldIP = "ip"
+	// FieldReferer holds the string denoting the referer field in the database.
+	FieldReferer = "referer"
 	// FieldEngineName holds the string denoting the engine_name field in the database.
 	FieldEngineName = "engine_name"
 	// FieldEngineVersion holds the string denoting the engine_version field in the database.
@@ -49,6 +53,8 @@ var Columns = []string{
 	FieldID,
 	FieldPlatform,
 	FieldOs,
+	FieldIP,
+	FieldReferer,
 	FieldEngineName,
 	FieldEngineVersion,
 	FieldBrowserName,

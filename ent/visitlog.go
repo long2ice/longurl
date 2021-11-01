@@ -21,6 +21,10 @@ type VisitLog struct {
 	Platform string `json:"platform,omitempty"`
 	// Os holds the value of the "os" field.
 	Os string `json:"os,omitempty"`
+	// IP holds the value of the "ip" field.
+	IP string `json:"ip,omitempty"`
+	// Referer holds the value of the "referer" field.
+	Referer string `json:"referer,omitempty"`
 	// EngineName holds the value of the "engine_name" field.
 	EngineName string `json:"engine_name,omitempty"`
 	// EngineVersion holds the value of the "engine_version" field.
@@ -75,7 +79,7 @@ func (*VisitLog) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case visitlog.FieldID:
 			values[i] = new(sql.NullInt64)
-		case visitlog.FieldPlatform, visitlog.FieldOs, visitlog.FieldEngineName, visitlog.FieldEngineVersion, visitlog.FieldBrowserName, visitlog.FieldBrowserVersion, visitlog.FieldMozilla:
+		case visitlog.FieldPlatform, visitlog.FieldOs, visitlog.FieldIP, visitlog.FieldReferer, visitlog.FieldEngineName, visitlog.FieldEngineVersion, visitlog.FieldBrowserName, visitlog.FieldBrowserVersion, visitlog.FieldMozilla:
 			values[i] = new(sql.NullString)
 		case visitlog.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -113,6 +117,18 @@ func (vl *VisitLog) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field os", values[i])
 			} else if value.Valid {
 				vl.Os = value.String
+			}
+		case visitlog.FieldIP:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ip", values[i])
+			} else if value.Valid {
+				vl.IP = value.String
+			}
+		case visitlog.FieldReferer:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field referer", values[i])
+			} else if value.Valid {
+				vl.Referer = value.String
 			}
 		case visitlog.FieldEngineName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -206,6 +222,10 @@ func (vl *VisitLog) String() string {
 	builder.WriteString(vl.Platform)
 	builder.WriteString(", os=")
 	builder.WriteString(vl.Os)
+	builder.WriteString(", ip=")
+	builder.WriteString(vl.IP)
+	builder.WriteString(", referer=")
+	builder.WriteString(vl.Referer)
 	builder.WriteString(", engine_name=")
 	builder.WriteString(vl.EngineName)
 	builder.WriteString(", engine_version=")

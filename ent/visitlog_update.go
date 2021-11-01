@@ -40,6 +40,18 @@ func (vlu *VisitLogUpdate) SetOs(s string) *VisitLogUpdate {
 	return vlu
 }
 
+// SetIP sets the "ip" field.
+func (vlu *VisitLogUpdate) SetIP(s string) *VisitLogUpdate {
+	vlu.mutation.SetIP(s)
+	return vlu
+}
+
+// SetReferer sets the "referer" field.
+func (vlu *VisitLogUpdate) SetReferer(s string) *VisitLogUpdate {
+	vlu.mutation.SetReferer(s)
+	return vlu
+}
+
 // SetEngineName sets the "engine_name" field.
 func (vlu *VisitLogUpdate) SetEngineName(s string) *VisitLogUpdate {
 	vlu.mutation.SetEngineName(s)
@@ -212,6 +224,20 @@ func (vlu *VisitLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: visitlog.FieldOs,
 		})
 	}
+	if value, ok := vlu.mutation.IP(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldIP,
+		})
+	}
+	if value, ok := vlu.mutation.Referer(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldReferer,
+		})
+	}
 	if value, ok := vlu.mutation.EngineName(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -331,6 +357,18 @@ func (vluo *VisitLogUpdateOne) SetPlatform(s string) *VisitLogUpdateOne {
 // SetOs sets the "os" field.
 func (vluo *VisitLogUpdateOne) SetOs(s string) *VisitLogUpdateOne {
 	vluo.mutation.SetOs(s)
+	return vluo
+}
+
+// SetIP sets the "ip" field.
+func (vluo *VisitLogUpdateOne) SetIP(s string) *VisitLogUpdateOne {
+	vluo.mutation.SetIP(s)
+	return vluo
+}
+
+// SetReferer sets the "referer" field.
+func (vluo *VisitLogUpdateOne) SetReferer(s string) *VisitLogUpdateOne {
+	vluo.mutation.SetReferer(s)
 	return vluo
 }
 
@@ -528,6 +566,20 @@ func (vluo *VisitLogUpdateOne) sqlSave(ctx context.Context) (_node *VisitLog, er
 			Type:   field.TypeString,
 			Value:  value,
 			Column: visitlog.FieldOs,
+		})
+	}
+	if value, ok := vluo.mutation.IP(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldIP,
+		})
+	}
+	if value, ok := vluo.mutation.Referer(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldReferer,
 		})
 	}
 	if value, ok := vluo.mutation.EngineName(); ok {

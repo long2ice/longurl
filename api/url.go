@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/martian/log"
@@ -16,11 +15,18 @@ import (
 	"time"
 )
 
-func visitLog(c *fiber.Ctx, url *ent.Url) {
+func createVisitLog(c *fiber.Ctx, url *ent.Url) {
 	userAgent := c.Request().Header.UserAgent()
 	ua := user_agent.New(string(userAgent))
 	engineName, engineVersion := ua.Engine()
 	browserName, browserVersion := ua.Browser()
+	ips := c.IPs()
+	var ip string
+	if len(ips) > 0 {
+		ip = ips[0]
+	} else {
+		ip = c.IP()
+	}
 	_, err := db.Client.VisitLog.Create().
 		SetURL(url).
 		SetMobile(ua.Mobile()).
@@ -32,7 +38,9 @@ func visitLog(c *fiber.Ctx, url *ent.Url) {
 		SetEngineVersion(engineVersion).
 		SetBrowserName(browserName).
 		SetBrowserVersion(browserVersion).
-		Save(context.Background())
+		SetReferer(string(c.Request().Header.Referer())).
+		SetIP(ip).
+		Save(c.Context())
 	if err != nil {
 		log.Errorf("Create visit log error: %v", err)
 	}
@@ -44,8 +52,7 @@ func VisitUrl(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 	if (u.ExpireAt != nil && u.ExpireAt.After(time.Now())) || u.ExpireAt == nil {
-		// log
-		go visitLog(c, u)
+		createVisitLog(c, u)
 		return c.Redirect(u.URL)
 	}
 	return c.SendStatus(fiber.StatusNotFound)

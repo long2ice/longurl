@@ -30,7 +30,7 @@ func init() {
 	visitlogFields := schema.VisitLog{}.Fields()
 	_ = visitlogFields
 	// visitlogDescCreatedAt is the schema descriptor for created_at field.
-	visitlogDescCreatedAt := visitlogFields[9].Descriptor()
+	visitlogDescCreatedAt := visitlogFields[11].Descriptor()
 	// visitlog.DefaultCreatedAt holds the default value on creation for the created_at field.
 	visitlog.DefaultCreatedAt = visitlogDescCreatedAt.Default.(func() time.Time)
 }

@@ -19,6 +19,8 @@ func (VisitLog) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("platform"),
 		field.String("os"),
+		field.String("ip"),
+		field.String("referer"),
 		field.String("engine_name"),
 		field.String("engine_version"),
 		field.String("browser_name"),

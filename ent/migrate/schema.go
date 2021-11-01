@@ -28,6 +28,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "platform", Type: field.TypeString},
 		{Name: "os", Type: field.TypeString},
+		{Name: "ip", Type: field.TypeString},
+		{Name: "referer", Type: field.TypeString},
 		{Name: "engine_name", Type: field.TypeString},
 		{Name: "engine_version", Type: field.TypeString},
 		{Name: "browser_name", Type: field.TypeString},
@@ -46,7 +48,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "log_url_logs",
-				Columns:    []*schema.Column{LogColumns[11]},
+				Columns:    []*schema.Column{LogColumns[13]},
 				RefColumns: []*schema.Column{URLColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

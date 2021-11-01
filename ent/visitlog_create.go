@@ -33,6 +33,18 @@ func (vlc *VisitLogCreate) SetOs(s string) *VisitLogCreate {
 	return vlc
 }
 
+// SetIP sets the "ip" field.
+func (vlc *VisitLogCreate) SetIP(s string) *VisitLogCreate {
+	vlc.mutation.SetIP(s)
+	return vlc
+}
+
+// SetReferer sets the "referer" field.
+func (vlc *VisitLogCreate) SetReferer(s string) *VisitLogCreate {
+	vlc.mutation.SetReferer(s)
+	return vlc
+}
+
 // SetEngineName sets the "engine_name" field.
 func (vlc *VisitLogCreate) SetEngineName(s string) *VisitLogCreate {
 	vlc.mutation.SetEngineName(s)
@@ -193,6 +205,12 @@ func (vlc *VisitLogCreate) check() error {
 	if _, ok := vlc.mutation.Os(); !ok {
 		return &ValidationError{Name: "os", err: errors.New(`ent: missing required field "os"`)}
 	}
+	if _, ok := vlc.mutation.IP(); !ok {
+		return &ValidationError{Name: "ip", err: errors.New(`ent: missing required field "ip"`)}
+	}
+	if _, ok := vlc.mutation.Referer(); !ok {
+		return &ValidationError{Name: "referer", err: errors.New(`ent: missing required field "referer"`)}
+	}
 	if _, ok := vlc.mutation.EngineName(); !ok {
 		return &ValidationError{Name: "engine_name", err: errors.New(`ent: missing required field "engine_name"`)}
 	}
@@ -259,6 +277,22 @@ func (vlc *VisitLogCreate) createSpec() (*VisitLog, *sqlgraph.CreateSpec) {
 			Column: visitlog.FieldOs,
 		})
 		_node.Os = value
+	}
+	if value, ok := vlc.mutation.IP(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldIP,
+		})
+		_node.IP = value
+	}
+	if value, ok := vlc.mutation.Referer(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: visitlog.FieldReferer,
+		})
+		_node.Referer = value
 	}
 	if value, ok := vlc.mutation.EngineName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
