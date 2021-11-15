@@ -17,7 +17,7 @@ type Url struct {
 // Fields of the Url.
 func (Url) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("url").NotEmpty(),
+		field.Text("url").NotEmpty(),
 		field.String("path").Unique().NotEmpty(),
 		field.Time("expire_at").Optional().Nillable(),
 		field.Time("created_at").Default(time.Now),
