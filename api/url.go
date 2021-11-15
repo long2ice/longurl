@@ -74,11 +74,19 @@ func GenerateShortUrl(c *fiber.Ctx) error {
 		}
 		str := utils.Encode(id)
 		u.Path = str[len(str)-UrlConfig.Length:]
+	} else {
+		if !UrlConfig.AllowCustomPath {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "custom path is not allowed",
+			})
+		}
 	}
 
 	obj := db.Client.Url.Create().SetURL(u.Url).SetPath(u.Path)
 	if u.ExpireAt != nil {
 		obj = obj.SetExpireAt(*u.ExpireAt)
+	} else {
+		obj = obj.SetExpireAt(time.Now().Add(UrlConfig.ExpireSeconds * time.Second))
 	}
 	_, err := obj.Save(c.Context())
 	if err != nil {

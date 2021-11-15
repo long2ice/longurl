@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
+	"time"
 )
 
 type Server struct {
@@ -13,9 +14,11 @@ type Server struct {
 	LogTimeFormat string `yaml:"logTimeFormat"`
 }
 type Url struct {
-	Schema string `yaml:"schema"`
-	Domain string `yaml:"domain"`
-	Length int    `yaml:"length"`
+	Schema          string        `yaml:"schema"`
+	Domain          string        `yaml:"domain"`
+	Length          int           `yaml:"length"`
+	AllowCustomPath bool          `yaml:"allowCustomPath"`
+	ExpireSeconds   time.Duration `yaml:"expireSeconds"`
 }
 type Database struct {
 	Type string `yaml:"type"`
