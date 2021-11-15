@@ -2,18 +2,27 @@ package db
 
 import (
 	"context"
+	"entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"long2ice/longurl/config"
 	"long2ice/longurl/ent"
 	"long2ice/longurl/ent/migrate"
+	"time"
 )
 
 var Client *ent.Client
 
 func init() {
 	var err error
-	Client, err = ent.Open(config.DatabaseConfig.Type, config.DatabaseConfig.Dsn)
+	drv, err := sql.Open(config.DatabaseConfig.Type, config.DatabaseConfig.Dsn)
+	if err != nil {
+		panic(err)
+	}
+	db := drv.DB()
+	db.SetConnMaxLifetime(time.Hour)
+	db.SetConnMaxIdleTime(time.Hour)
+	Client = ent.NewClient(ent.Driver(drv))
 	if err != nil {
 		log.Fatalf("Connect to database error: %v", err)
 	}
