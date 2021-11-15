@@ -23,6 +23,12 @@ Return like this:
 
 Now Visit <https://longurl.long2ice.io/3FXrsHE>.
 
+### Params
+
+- `url`: the url to be shorted.
+- `path`: the custom path for short url, can config allow or not.
+- `expire_at`: when the short url expire, can set default expire in config.
+
 ## Deploy
 
 First write a `config.yaml`.
