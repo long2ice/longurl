@@ -12,7 +12,7 @@ var (
 	// URLColumns holds the columns for the "url" table.
 	URLColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "url", Type: field.TypeString},
+		{Name: "url", Type: field.TypeString, Size: 2147483647},
 		{Name: "path", Type: field.TypeString, Unique: true},
 		{Name: "expire_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
