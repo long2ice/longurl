@@ -9,6 +9,7 @@ url:
   length: 7
   allowCustomPath: true
   expireSeconds: 2592000
+  unique: true
 database:
   type: mysql
   dsn: root:123456@tcp(127.0.0.1:3306)/longurl?parseTime=true

@@ -14,11 +14,12 @@ type Server struct {
 	LogTimeFormat string `yaml:"logTimeFormat"`
 }
 type Url struct {
-	Schema          string        `yaml:"schema"`
-	Domain          string        `yaml:"domain"`
-	Length          int           `yaml:"length"`
-	AllowCustomPath bool          `yaml:"allowCustomPath"`
-	ExpireSeconds   time.Duration `yaml:"expireSeconds"`
+	Schema          string         `yaml:"schema"`
+	Domain          string         `yaml:"domain"`
+	Length          int            `yaml:"length"`
+	AllowCustomPath bool           `yaml:"allowCustomPath"`
+	ExpireSeconds   *time.Duration `yaml:"expireSeconds"`
+	Unique          bool           `json:"unique"`
 }
 type Database struct {
 	Type string `yaml:"type"`

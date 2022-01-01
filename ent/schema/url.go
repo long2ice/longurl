@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"time"
 )
 
@@ -35,5 +36,12 @@ func (Url) Edges() []ent.Edge {
 func (Url) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entsql.Annotation{Table: "url"},
+	}
+}
+
+// Indexes of the Url.
+func (Url) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("url"),
 	}
 }

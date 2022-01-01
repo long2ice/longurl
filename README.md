@@ -42,9 +42,10 @@ server:
 url:
   domain: localhost:3000
   schema: http
-  length: 7
-  allowCustomPath: true
-  expireSeconds: 2592000
+  length: 7                 # the path length
+  allowCustomPath: true     # allow custom short url path
+  expireSeconds: 2592000    # default expire seconds
+  unque: true               # same urls only generate one short url
 database:
   type: mysql
   dsn: root:123456@tcp(127.0.0.1:3306)/longurl?parseTime=true
@@ -53,7 +54,7 @@ database:
 Then run with `docker`.
 
 ```shell
-docker run -d -p 3000:3000 --name longurl -v config.yaml:/config.yaml ghcr.io/long2ice/longurl/longurl
+docker run -d -p 3000:3000 --name longurl -v /config.yaml:/config.yaml ghcr.io/long2ice/longurl/longurl
 ```
 
 ## Credits

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/martian/log"
 	"github.com/mssola/user_agent"
@@ -67,6 +66,19 @@ func GenerateShortUrl(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
+	if UrlConfig.Unique {
+		fu, err := db.Client.Url.Query().Where(url.URL(u.Url)).First(c.Context())
+		if err != nil && !ent.IsNotFound(err) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": err.Error(),
+			})
+		}
+		if err == nil {
+			return c.JSON(fiber.Map{
+				"url": utils.FormatPath(fu.Path),
+			})
+		}
+	}
 	if u.Path == "" {
 		id, err := sonyflake.SF.NextID()
 		if err != nil {
@@ -84,16 +96,24 @@ func GenerateShortUrl(c *fiber.Ctx) error {
 
 	obj := db.Client.Url.Create().SetURL(u.Url).SetPath(u.Path)
 	if u.ExpireAt != nil {
+		if UrlConfig.ExpireSeconds != nil {
+			if u.ExpireAt.Sub(time.Now()).Seconds() > float64(*UrlConfig.ExpireSeconds) {
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"message": "expire_at is larger than config value",
+				})
+			}
+		}
 		obj = obj.SetExpireAt(*u.ExpireAt)
 	} else {
-		obj = obj.SetExpireAt(time.Now().Add(UrlConfig.ExpireSeconds * time.Second))
+		if UrlConfig.ExpireSeconds != nil {
+			obj = obj.SetExpireAt(time.Now().Add(*UrlConfig.ExpireSeconds * time.Second))
+		}
 	}
 	_, err := obj.Save(c.Context())
 	if err != nil {
 		return err
 	}
-	shortUrl := fmt.Sprintf("%s://%s/%s", UrlConfig.Schema, UrlConfig.Domain, u.Path)
 	return c.JSON(fiber.Map{
-		"url": shortUrl,
+		"url": utils.FormatPath(u.Path),
 	})
 }
