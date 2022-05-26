@@ -3,6 +3,8 @@
 [![deploy](https://github.com/long2ice/longurl/actions/workflows/deploy.yml/badge.svg)](https://github.com/long2ice/longurl/actions/workflows/deploy.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/long2ice/longurl.svg)](https://pkg.go.dev/github.com/long2ice/longurl)
 
+![screenshot](./images/screenshot.png)
+
 ## Introduction
 
 `longurl` is a self-hosted short url service.
@@ -58,6 +60,10 @@ docker run -d -p 3000:3000 --name longurl -v /config.yaml:/config.yaml ghcr.io/l
 ```
 
 You can visit <http://localhost:3000/docs> to see the API docs.
+
+## Frontend
+
+The frontend project is [https://github.com/long2ice/longurl-web](https://github.com/long2ice/longurl-web).
 
 ## Credits
 
