@@ -4,9 +4,10 @@ package enttest
 
 import (
 	"context"
-	"long2ice/longurl/ent"
+
+	"github.com/long2ice/longurl/ent"
 	// required by schema hooks.
-	_ "long2ice/longurl/ent/runtime"
+	_ "github.com/long2ice/longurl/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

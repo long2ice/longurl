@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // URLCreate is the builder for creating a Url entity.
@@ -156,23 +156,23 @@ func (uc *URLCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (uc *URLCreate) check() error {
 	if _, ok := uc.mutation.URL(); !ok {
-		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "url"`)}
+		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Url.url"`)}
 	}
 	if v, ok := uc.mutation.URL(); ok {
 		if err := url.URLValidator(v); err != nil {
-			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "url": %w`, err)}
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Url.url": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.Path(); !ok {
-		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "path"`)}
+		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Url.path"`)}
 	}
 	if v, ok := uc.mutation.Path(); ok {
 		if err := url.PathValidator(v); err != nil {
-			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "path": %w`, err)}
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Url.path": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Url.created_at"`)}
 	}
 	return nil
 }

@@ -4,15 +4,16 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"long2ice/longurl/ent/predicate"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/predicate"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // VisitLogUpdate is the builder for updating VisitLog entities.
@@ -532,7 +533,7 @@ func (vluo *VisitLogUpdateOne) sqlSave(ctx context.Context) (_node *VisitLog, er
 	}
 	id, ok := vluo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing VisitLog.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "VisitLog.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := vluo.fields; len(fields) > 0 {

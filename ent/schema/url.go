@@ -19,7 +19,7 @@ type Url struct {
 func (Url) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("url").NotEmpty(),
-		field.String("path").Unique().NotEmpty(),
+		field.String("path").MaxLen(20).Unique().NotEmpty(),
 		field.Time("expire_at").Optional().Nillable(),
 		field.Time("created_at").Default(time.Now),
 	}
@@ -42,6 +42,7 @@ func (Url) Annotations() []schema.Annotation {
 // Indexes of the Url.
 func (Url) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("url"),
+		index.Fields("path"),
+		index.Fields("url").Annotations(entsql.Prefix(200)),
 	}
 }

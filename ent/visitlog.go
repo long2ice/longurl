@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // VisitLog is the model entity for the VisitLog schema.

@@ -1,8 +1,8 @@
 package sonyflake
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/sony/sonyflake"
-	"log"
 )
 
 var SF *sonyflake.Sonyflake

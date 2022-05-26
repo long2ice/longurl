@@ -7,14 +7,14 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"long2ice/longurl/ent/predicate"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/predicate"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // URLQuery is the builder for querying Url entities.
@@ -132,7 +132,7 @@ func (uq *URLQuery) FirstIDX(ctx context.Context) int {
 }
 
 // Only returns a single Url entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Url entity is not found.
+// Returns a *NotSingularError when more than one Url entity is found.
 // Returns a *NotFoundError when no Url entities are found.
 func (uq *URLQuery) Only(ctx context.Context) (*Url, error) {
 	nodes, err := uq.Limit(2).All(ctx)
@@ -159,7 +159,7 @@ func (uq *URLQuery) OnlyX(ctx context.Context) *Url {
 }
 
 // OnlyID is like Only, but returns the only Url ID in the query.
-// Returns a *NotSingularError when exactly one Url ID is not found.
+// Returns a *NotSingularError when more than one Url ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (uq *URLQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
@@ -269,8 +269,9 @@ func (uq *URLQuery) Clone() *URLQuery {
 		predicates: append([]predicate.Url{}, uq.predicates...),
 		withLogs:   uq.withLogs.Clone(),
 		// clone intermediate query.
-		sql:  uq.sql.Clone(),
-		path: uq.path,
+		sql:    uq.sql.Clone(),
+		path:   uq.path,
+		unique: uq.unique,
 	}
 }
 
@@ -408,6 +409,10 @@ func (uq *URLQuery) sqlAll(ctx context.Context) ([]*Url, error) {
 
 func (uq *URLQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
+	_spec.Node.Columns = uq.fields
+	if len(uq.fields) > 0 {
+		_spec.Unique = uq.unique != nil && *uq.unique
+	}
 	return sqlgraph.CountNodes(ctx, uq.driver, _spec)
 }
 
@@ -478,6 +483,9 @@ func (uq *URLQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if uq.sql != nil {
 		selector = uq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if uq.unique != nil && *uq.unique {
+		selector.Distinct()
 	}
 	for _, p := range uq.predicates {
 		p(selector)
@@ -757,9 +765,7 @@ func (ugb *URLGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range ugb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(ugb.fields...)...)

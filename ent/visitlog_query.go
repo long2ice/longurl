@@ -6,14 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"long2ice/longurl/ent/predicate"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/predicate"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // VisitLogQuery is the builder for querying VisitLog entities.
@@ -132,7 +132,7 @@ func (vlq *VisitLogQuery) FirstIDX(ctx context.Context) int {
 }
 
 // Only returns a single VisitLog entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one VisitLog entity is not found.
+// Returns a *NotSingularError when more than one VisitLog entity is found.
 // Returns a *NotFoundError when no VisitLog entities are found.
 func (vlq *VisitLogQuery) Only(ctx context.Context) (*VisitLog, error) {
 	nodes, err := vlq.Limit(2).All(ctx)
@@ -159,7 +159,7 @@ func (vlq *VisitLogQuery) OnlyX(ctx context.Context) *VisitLog {
 }
 
 // OnlyID is like Only, but returns the only VisitLog ID in the query.
-// Returns a *NotSingularError when exactly one VisitLog ID is not found.
+// Returns a *NotSingularError when more than one VisitLog ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (vlq *VisitLogQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
@@ -269,8 +269,9 @@ func (vlq *VisitLogQuery) Clone() *VisitLogQuery {
 		predicates: append([]predicate.VisitLog{}, vlq.predicates...),
 		withURL:    vlq.withURL.Clone(),
 		// clone intermediate query.
-		sql:  vlq.sql.Clone(),
-		path: vlq.path,
+		sql:    vlq.sql.Clone(),
+		path:   vlq.path,
+		unique: vlq.unique,
 	}
 }
 
@@ -415,6 +416,10 @@ func (vlq *VisitLogQuery) sqlAll(ctx context.Context) ([]*VisitLog, error) {
 
 func (vlq *VisitLogQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := vlq.querySpec()
+	_spec.Node.Columns = vlq.fields
+	if len(vlq.fields) > 0 {
+		_spec.Unique = vlq.unique != nil && *vlq.unique
+	}
 	return sqlgraph.CountNodes(ctx, vlq.driver, _spec)
 }
 
@@ -485,6 +490,9 @@ func (vlq *VisitLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if vlq.sql != nil {
 		selector = vlq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if vlq.unique != nil && *vlq.unique {
+		selector.Distinct()
 	}
 	for _, p := range vlq.predicates {
 		p(selector)
@@ -764,9 +772,7 @@ func (vlgb *VisitLogGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range vlgb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(vlgb.fields...)...)

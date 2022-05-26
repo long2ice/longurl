@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"long2ice/longurl/ent"
+
+	"github.com/long2ice/longurl/ent"
 )
 
 // The UrlFunc type is an adapter to allow the use of ordinary

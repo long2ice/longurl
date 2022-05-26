@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"long2ice/longurl/config"
+	"github.com/long2ice/longurl/config"
 )
 
 var UrlConfig = config.UrlConfig

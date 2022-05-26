@@ -13,7 +13,7 @@ var (
 	URLColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "url", Type: field.TypeString, Size: 2147483647},
-		{Name: "path", Type: field.TypeString, Unique: true},
+		{Name: "path", Type: field.TypeString, Unique: true, Size: 20},
 		{Name: "expire_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 	}
@@ -22,6 +22,21 @@ var (
 		Name:       "url",
 		Columns:    URLColumns,
 		PrimaryKey: []*schema.Column{URLColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "url_path",
+				Unique:  false,
+				Columns: []*schema.Column{URLColumns[2]},
+			},
+			{
+				Name:    "url_url",
+				Unique:  false,
+				Columns: []*schema.Column{URLColumns[1]},
+				Annotation: &entsql.IndexAnnotation{
+					Prefix: 200,
+				},
+			},
+		},
 	}
 	// LogColumns holds the columns for the "log" table.
 	LogColumns = []*schema.Column{

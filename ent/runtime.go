@@ -3,10 +3,11 @@
 package ent
 
 import (
-	"long2ice/longurl/ent/schema"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"time"
+
+	"github.com/long2ice/longurl/ent/schema"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -22,7 +23,21 @@ func init() {
 	// urlDescPath is the schema descriptor for path field.
 	urlDescPath := urlFields[1].Descriptor()
 	// url.PathValidator is a validator for the "path" field. It is called by the builders before save.
-	url.PathValidator = urlDescPath.Validators[0].(func(string) error)
+	url.PathValidator = func() func(string) error {
+		validators := urlDescPath.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(_path string) error {
+			for _, fn := range fns {
+				if err := fn(_path); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// urlDescCreatedAt is the schema descriptor for created_at field.
 	urlDescCreatedAt := urlFields[3].Descriptor()
 	// url.DefaultCreatedAt holds the default value on creation for the created_at field.

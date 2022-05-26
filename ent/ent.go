@@ -5,11 +5,11 @@ package ent
 import (
 	"errors"
 	"fmt"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -143,7 +143,7 @@ func Sum(field string) AggregateFunc {
 	}
 }
 
-// ValidationError returns when validating a field fails.
+// ValidationError returns when validating a field or edge fails.
 type ValidationError struct {
 	Name string // Field or edge name.
 	err  error

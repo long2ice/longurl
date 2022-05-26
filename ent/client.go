@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 
-	"long2ice/longurl/ent/migrate"
+	"github.com/long2ice/longurl/ent/migrate"
 
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -93,6 +93,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
+		ctx:      ctx,
 		config:   cfg,
 		Url:      NewUrlClient(cfg),
 		VisitLog: NewVisitLogClient(cfg),

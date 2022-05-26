@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
-	"long2ice/longurl/ent/predicate"
-	"long2ice/longurl/ent/visitlog"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/predicate"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // VisitLogDelete is the builder for deleting a VisitLog entity.

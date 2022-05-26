@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // VisitLogCreate is the builder for creating a VisitLog entity.
@@ -200,40 +200,40 @@ func (vlc *VisitLogCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (vlc *VisitLogCreate) check() error {
 	if _, ok := vlc.mutation.Platform(); !ok {
-		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "platform"`)}
+		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "VisitLog.platform"`)}
 	}
 	if _, ok := vlc.mutation.Os(); !ok {
-		return &ValidationError{Name: "os", err: errors.New(`ent: missing required field "os"`)}
+		return &ValidationError{Name: "os", err: errors.New(`ent: missing required field "VisitLog.os"`)}
 	}
 	if _, ok := vlc.mutation.IP(); !ok {
-		return &ValidationError{Name: "ip", err: errors.New(`ent: missing required field "ip"`)}
+		return &ValidationError{Name: "ip", err: errors.New(`ent: missing required field "VisitLog.ip"`)}
 	}
 	if _, ok := vlc.mutation.Referer(); !ok {
-		return &ValidationError{Name: "referer", err: errors.New(`ent: missing required field "referer"`)}
+		return &ValidationError{Name: "referer", err: errors.New(`ent: missing required field "VisitLog.referer"`)}
 	}
 	if _, ok := vlc.mutation.EngineName(); !ok {
-		return &ValidationError{Name: "engine_name", err: errors.New(`ent: missing required field "engine_name"`)}
+		return &ValidationError{Name: "engine_name", err: errors.New(`ent: missing required field "VisitLog.engine_name"`)}
 	}
 	if _, ok := vlc.mutation.EngineVersion(); !ok {
-		return &ValidationError{Name: "engine_version", err: errors.New(`ent: missing required field "engine_version"`)}
+		return &ValidationError{Name: "engine_version", err: errors.New(`ent: missing required field "VisitLog.engine_version"`)}
 	}
 	if _, ok := vlc.mutation.BrowserName(); !ok {
-		return &ValidationError{Name: "browser_name", err: errors.New(`ent: missing required field "browser_name"`)}
+		return &ValidationError{Name: "browser_name", err: errors.New(`ent: missing required field "VisitLog.browser_name"`)}
 	}
 	if _, ok := vlc.mutation.BrowserVersion(); !ok {
-		return &ValidationError{Name: "browser_version", err: errors.New(`ent: missing required field "browser_version"`)}
+		return &ValidationError{Name: "browser_version", err: errors.New(`ent: missing required field "VisitLog.browser_version"`)}
 	}
 	if _, ok := vlc.mutation.Mozilla(); !ok {
-		return &ValidationError{Name: "mozilla", err: errors.New(`ent: missing required field "mozilla"`)}
+		return &ValidationError{Name: "mozilla", err: errors.New(`ent: missing required field "VisitLog.mozilla"`)}
 	}
 	if _, ok := vlc.mutation.Bot(); !ok {
-		return &ValidationError{Name: "bot", err: errors.New(`ent: missing required field "bot"`)}
+		return &ValidationError{Name: "bot", err: errors.New(`ent: missing required field "VisitLog.bot"`)}
 	}
 	if _, ok := vlc.mutation.Mobile(); !ok {
-		return &ValidationError{Name: "mobile", err: errors.New(`ent: missing required field "mobile"`)}
+		return &ValidationError{Name: "mobile", err: errors.New(`ent: missing required field "VisitLog.mobile"`)}
 	}
 	if _, ok := vlc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "VisitLog.created_at"`)}
 	}
 	return nil
 }

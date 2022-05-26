@@ -4,10 +4,10 @@ import (
 	"context"
 	"entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
-	"long2ice/longurl/config"
-	"long2ice/longurl/ent"
-	"long2ice/longurl/ent/migrate"
+	"github.com/long2ice/longurl/config"
+	"github.com/long2ice/longurl/ent"
+	"github.com/long2ice/longurl/ent/migrate"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 

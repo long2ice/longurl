@@ -4,15 +4,16 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"long2ice/longurl/ent/predicate"
-	"long2ice/longurl/ent/url"
-	"long2ice/longurl/ent/visitlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/long2ice/longurl/ent/predicate"
+	"github.com/long2ice/longurl/ent/url"
+	"github.com/long2ice/longurl/ent/visitlog"
 )
 
 // URLUpdate is the builder for updating Url entities.
@@ -179,12 +180,12 @@ func (uu *URLUpdate) ExecX(ctx context.Context) {
 func (uu *URLUpdate) check() error {
 	if v, ok := uu.mutation.URL(); ok {
 		if err := url.URLValidator(v); err != nil {
-			return &ValidationError{Name: "url", err: fmt.Errorf("ent: validator failed for field \"url\": %w", err)}
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Url.url": %w`, err)}
 		}
 	}
 	if v, ok := uu.mutation.Path(); ok {
 		if err := url.PathValidator(v); err != nil {
-			return &ValidationError{Name: "path", err: fmt.Errorf("ent: validator failed for field \"path\": %w", err)}
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Url.path": %w`, err)}
 		}
 	}
 	return nil
@@ -473,12 +474,12 @@ func (uuo *URLUpdateOne) ExecX(ctx context.Context) {
 func (uuo *URLUpdateOne) check() error {
 	if v, ok := uuo.mutation.URL(); ok {
 		if err := url.URLValidator(v); err != nil {
-			return &ValidationError{Name: "url", err: fmt.Errorf("ent: validator failed for field \"url\": %w", err)}
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Url.url": %w`, err)}
 		}
 	}
 	if v, ok := uuo.mutation.Path(); ok {
 		if err := url.PathValidator(v); err != nil {
-			return &ValidationError{Name: "path", err: fmt.Errorf("ent: validator failed for field \"path\": %w", err)}
+			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Url.path": %w`, err)}
 		}
 	}
 	return nil
@@ -497,7 +498,7 @@ func (uuo *URLUpdateOne) sqlSave(ctx context.Context) (_node *Url, err error) {
 	}
 	id, ok := uuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Url.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Url.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := uuo.fields; len(fields) > 0 {

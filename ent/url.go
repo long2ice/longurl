@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"long2ice/longurl/ent/url"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/long2ice/longurl/ent/url"
 )
 
 // Url is the model entity for the Url schema.

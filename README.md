@@ -57,6 +57,8 @@ Then run with `docker`.
 docker run -d -p 3000:3000 --name longurl -v /config.yaml:/config.yaml ghcr.io/long2ice/longurl/longurl
 ```
 
+You can visit <http://localhost:3000/docs> to see the API docs.
+
 ## Credits
 
 - [Fiber](https://github.com/gofiber/fiber), Express inspired web framework written in Go.
