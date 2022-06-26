@@ -23,7 +23,7 @@ type GenerateShortURL struct {
 
 func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 	if UrlConfig.Unique {
-		fu, err := db.Client.Url.Query().Where(url.URL(g.URL), url.ExpireAtLT(time.Now())).First(c.Context())
+		fu, err := db.Client.Url.Query().Where(url.URL(g.URL), url.ExpireAtGT(time.Now())).First(c.Context())
 		if err != nil && !ent.IsNotFound(err) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": err.Error(),
