@@ -23,7 +23,7 @@ type GenerateShortURL struct {
 
 func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 	if UrlConfig.Unique {
-		fu, err := db.Client.Url.Query().Where(url.URL(g.URL), url.ExpireAtGT(time.Now())).First(c.Context())
+		fu, err := db.Client.Url.Query().Where(url.URL(g.URL), url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil())).First(c.Context())
 		if err != nil && !ent.IsNotFound(err) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": err.Error(),
@@ -79,7 +79,7 @@ type VisitURL struct {
 }
 
 func (v *VisitURL) Handler(c *fiber.Ctx) error {
-	u, err := db.Client.Url.Query().Where(url.Path(v.Path), url.ExpireAtGT(time.Now())).First(c.Context())
+	u, err := db.Client.Url.Query().Where(url.Path(v.Path), url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil())).First(c.Context())
 	if err != nil {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
