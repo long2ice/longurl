@@ -38,8 +38,16 @@ func init() {
 			return nil
 		}
 	}()
+	// urlDescCurrentTimes is the schema descriptor for current_times field.
+	urlDescCurrentTimes := urlFields[2].Descriptor()
+	// url.DefaultCurrentTimes holds the default value on creation for the current_times field.
+	url.DefaultCurrentTimes = urlDescCurrentTimes.Default.(int)
+	// urlDescMaxTimes is the schema descriptor for max_times field.
+	urlDescMaxTimes := urlFields[3].Descriptor()
+	// url.DefaultMaxTimes holds the default value on creation for the max_times field.
+	url.DefaultMaxTimes = urlDescMaxTimes.Default.(int)
 	// urlDescCreatedAt is the schema descriptor for created_at field.
-	urlDescCreatedAt := urlFields[3].Descriptor()
+	urlDescCreatedAt := urlFields[5].Descriptor()
 	// url.DefaultCreatedAt holds the default value on creation for the created_at field.
 	url.DefaultCreatedAt = urlDescCreatedAt.Default.(func() time.Time)
 	visitlogFields := schema.VisitLog{}.Fields()

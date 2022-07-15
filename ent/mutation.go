@@ -32,20 +32,24 @@ const (
 // URLMutation represents an operation that mutates the Url nodes in the graph.
 type URLMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	url           *string
-	_path         *string
-	expire_at     *time.Time
-	created_at    *time.Time
-	clearedFields map[string]struct{}
-	logs          map[int]struct{}
-	removedlogs   map[int]struct{}
-	clearedlogs   bool
-	done          bool
-	oldValue      func(context.Context) (*Url, error)
-	predicates    []predicate.Url
+	op               Op
+	typ              string
+	id               *int
+	url              *string
+	_path            *string
+	current_times    *int
+	addcurrent_times *int
+	max_times        *int
+	addmax_times     *int
+	expire_at        *time.Time
+	created_at       *time.Time
+	clearedFields    map[string]struct{}
+	logs             map[int]struct{}
+	removedlogs      map[int]struct{}
+	clearedlogs      bool
+	done             bool
+	oldValue         func(context.Context) (*Url, error)
+	predicates       []predicate.Url
 }
 
 var _ ent.Mutation = (*URLMutation)(nil)
@@ -218,6 +222,118 @@ func (m *URLMutation) ResetPath() {
 	m._path = nil
 }
 
+// SetCurrentTimes sets the "current_times" field.
+func (m *URLMutation) SetCurrentTimes(i int) {
+	m.current_times = &i
+	m.addcurrent_times = nil
+}
+
+// CurrentTimes returns the value of the "current_times" field in the mutation.
+func (m *URLMutation) CurrentTimes() (r int, exists bool) {
+	v := m.current_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentTimes returns the old "current_times" field's value of the Url entity.
+// If the Url object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *URLMutation) OldCurrentTimes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentTimes: %w", err)
+	}
+	return oldValue.CurrentTimes, nil
+}
+
+// AddCurrentTimes adds i to the "current_times" field.
+func (m *URLMutation) AddCurrentTimes(i int) {
+	if m.addcurrent_times != nil {
+		*m.addcurrent_times += i
+	} else {
+		m.addcurrent_times = &i
+	}
+}
+
+// AddedCurrentTimes returns the value that was added to the "current_times" field in this mutation.
+func (m *URLMutation) AddedCurrentTimes() (r int, exists bool) {
+	v := m.addcurrent_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentTimes resets all changes to the "current_times" field.
+func (m *URLMutation) ResetCurrentTimes() {
+	m.current_times = nil
+	m.addcurrent_times = nil
+}
+
+// SetMaxTimes sets the "max_times" field.
+func (m *URLMutation) SetMaxTimes(i int) {
+	m.max_times = &i
+	m.addmax_times = nil
+}
+
+// MaxTimes returns the value of the "max_times" field in the mutation.
+func (m *URLMutation) MaxTimes() (r int, exists bool) {
+	v := m.max_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxTimes returns the old "max_times" field's value of the Url entity.
+// If the Url object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *URLMutation) OldMaxTimes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxTimes: %w", err)
+	}
+	return oldValue.MaxTimes, nil
+}
+
+// AddMaxTimes adds i to the "max_times" field.
+func (m *URLMutation) AddMaxTimes(i int) {
+	if m.addmax_times != nil {
+		*m.addmax_times += i
+	} else {
+		m.addmax_times = &i
+	}
+}
+
+// AddedMaxTimes returns the value that was added to the "max_times" field in this mutation.
+func (m *URLMutation) AddedMaxTimes() (r int, exists bool) {
+	v := m.addmax_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxTimes resets all changes to the "max_times" field.
+func (m *URLMutation) ResetMaxTimes() {
+	m.max_times = nil
+	m.addmax_times = nil
+}
+
 // SetExpireAt sets the "expire_at" field.
 func (m *URLMutation) SetExpireAt(t time.Time) {
 	m.expire_at = &t
@@ -376,12 +492,18 @@ func (m *URLMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *URLMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.url != nil {
 		fields = append(fields, url.FieldURL)
 	}
 	if m._path != nil {
 		fields = append(fields, url.FieldPath)
+	}
+	if m.current_times != nil {
+		fields = append(fields, url.FieldCurrentTimes)
+	}
+	if m.max_times != nil {
+		fields = append(fields, url.FieldMaxTimes)
 	}
 	if m.expire_at != nil {
 		fields = append(fields, url.FieldExpireAt)
@@ -401,6 +523,10 @@ func (m *URLMutation) Field(name string) (ent.Value, bool) {
 		return m.URL()
 	case url.FieldPath:
 		return m.Path()
+	case url.FieldCurrentTimes:
+		return m.CurrentTimes()
+	case url.FieldMaxTimes:
+		return m.MaxTimes()
 	case url.FieldExpireAt:
 		return m.ExpireAt()
 	case url.FieldCreatedAt:
@@ -418,6 +544,10 @@ func (m *URLMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldURL(ctx)
 	case url.FieldPath:
 		return m.OldPath(ctx)
+	case url.FieldCurrentTimes:
+		return m.OldCurrentTimes(ctx)
+	case url.FieldMaxTimes:
+		return m.OldMaxTimes(ctx)
 	case url.FieldExpireAt:
 		return m.OldExpireAt(ctx)
 	case url.FieldCreatedAt:
@@ -445,6 +575,20 @@ func (m *URLMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPath(v)
 		return nil
+	case url.FieldCurrentTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentTimes(v)
+		return nil
+	case url.FieldMaxTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxTimes(v)
+		return nil
 	case url.FieldExpireAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -466,13 +610,26 @@ func (m *URLMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *URLMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addcurrent_times != nil {
+		fields = append(fields, url.FieldCurrentTimes)
+	}
+	if m.addmax_times != nil {
+		fields = append(fields, url.FieldMaxTimes)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *URLMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case url.FieldCurrentTimes:
+		return m.AddedCurrentTimes()
+	case url.FieldMaxTimes:
+		return m.AddedMaxTimes()
+	}
 	return nil, false
 }
 
@@ -481,6 +638,20 @@ func (m *URLMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *URLMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case url.FieldCurrentTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentTimes(v)
+		return nil
+	case url.FieldMaxTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxTimes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Url numeric field %s", name)
 }
@@ -522,6 +693,12 @@ func (m *URLMutation) ResetField(name string) error {
 		return nil
 	case url.FieldPath:
 		m.ResetPath()
+		return nil
+	case url.FieldCurrentTimes:
+		m.ResetCurrentTimes()
+		return nil
+	case url.FieldMaxTimes:
+		m.ResetMaxTimes()
 		return nil
 	case url.FieldExpireAt:
 		m.ResetExpireAt()

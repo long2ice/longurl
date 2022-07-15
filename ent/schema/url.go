@@ -19,7 +19,9 @@ type Url struct {
 func (Url) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("url").NotEmpty(),
-		field.String("path").MaxLen(20).Unique().NotEmpty(),
+		field.String("path").MaxLen(20).NotEmpty(),
+		field.Int("current_times").Default(0),
+		field.Int("max_times").Default(0),
 		field.Time("expire_at").Optional().Nillable(),
 		field.Time("created_at").Default(time.Now),
 	}

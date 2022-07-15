@@ -15,6 +15,10 @@ const (
 	FieldURL = "url"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldCurrentTimes holds the string denoting the current_times field in the database.
+	FieldCurrentTimes = "current_times"
+	// FieldMaxTimes holds the string denoting the max_times field in the database.
+	FieldMaxTimes = "max_times"
 	// FieldExpireAt holds the string denoting the expire_at field in the database.
 	FieldExpireAt = "expire_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -37,6 +41,8 @@ var Columns = []string{
 	FieldID,
 	FieldURL,
 	FieldPath,
+	FieldCurrentTimes,
+	FieldMaxTimes,
 	FieldExpireAt,
 	FieldCreatedAt,
 }
@@ -56,6 +62,10 @@ var (
 	URLValidator func(string) error
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
+	// DefaultCurrentTimes holds the default value on creation for the "current_times" field.
+	DefaultCurrentTimes int
+	// DefaultMaxTimes holds the default value on creation for the "max_times" field.
+	DefaultMaxTimes int
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )

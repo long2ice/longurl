@@ -41,6 +41,48 @@ func (uu *URLUpdate) SetPath(s string) *URLUpdate {
 	return uu
 }
 
+// SetCurrentTimes sets the "current_times" field.
+func (uu *URLUpdate) SetCurrentTimes(i int) *URLUpdate {
+	uu.mutation.ResetCurrentTimes()
+	uu.mutation.SetCurrentTimes(i)
+	return uu
+}
+
+// SetNillableCurrentTimes sets the "current_times" field if the given value is not nil.
+func (uu *URLUpdate) SetNillableCurrentTimes(i *int) *URLUpdate {
+	if i != nil {
+		uu.SetCurrentTimes(*i)
+	}
+	return uu
+}
+
+// AddCurrentTimes adds i to the "current_times" field.
+func (uu *URLUpdate) AddCurrentTimes(i int) *URLUpdate {
+	uu.mutation.AddCurrentTimes(i)
+	return uu
+}
+
+// SetMaxTimes sets the "max_times" field.
+func (uu *URLUpdate) SetMaxTimes(i int) *URLUpdate {
+	uu.mutation.ResetMaxTimes()
+	uu.mutation.SetMaxTimes(i)
+	return uu
+}
+
+// SetNillableMaxTimes sets the "max_times" field if the given value is not nil.
+func (uu *URLUpdate) SetNillableMaxTimes(i *int) *URLUpdate {
+	if i != nil {
+		uu.SetMaxTimes(*i)
+	}
+	return uu
+}
+
+// AddMaxTimes adds i to the "max_times" field.
+func (uu *URLUpdate) AddMaxTimes(i int) *URLUpdate {
+	uu.mutation.AddMaxTimes(i)
+	return uu
+}
+
 // SetExpireAt sets the "expire_at" field.
 func (uu *URLUpdate) SetExpireAt(t time.Time) *URLUpdate {
 	uu.mutation.SetExpireAt(t)
@@ -223,6 +265,34 @@ func (uu *URLUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: url.FieldPath,
 		})
 	}
+	if value, ok := uu.mutation.CurrentTimes(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldCurrentTimes,
+		})
+	}
+	if value, ok := uu.mutation.AddedCurrentTimes(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldCurrentTimes,
+		})
+	}
+	if value, ok := uu.mutation.MaxTimes(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldMaxTimes,
+		})
+	}
+	if value, ok := uu.mutation.AddedMaxTimes(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldMaxTimes,
+		})
+	}
 	if value, ok := uu.mutation.ExpireAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -325,6 +395,48 @@ func (uuo *URLUpdateOne) SetURL(s string) *URLUpdateOne {
 // SetPath sets the "path" field.
 func (uuo *URLUpdateOne) SetPath(s string) *URLUpdateOne {
 	uuo.mutation.SetPath(s)
+	return uuo
+}
+
+// SetCurrentTimes sets the "current_times" field.
+func (uuo *URLUpdateOne) SetCurrentTimes(i int) *URLUpdateOne {
+	uuo.mutation.ResetCurrentTimes()
+	uuo.mutation.SetCurrentTimes(i)
+	return uuo
+}
+
+// SetNillableCurrentTimes sets the "current_times" field if the given value is not nil.
+func (uuo *URLUpdateOne) SetNillableCurrentTimes(i *int) *URLUpdateOne {
+	if i != nil {
+		uuo.SetCurrentTimes(*i)
+	}
+	return uuo
+}
+
+// AddCurrentTimes adds i to the "current_times" field.
+func (uuo *URLUpdateOne) AddCurrentTimes(i int) *URLUpdateOne {
+	uuo.mutation.AddCurrentTimes(i)
+	return uuo
+}
+
+// SetMaxTimes sets the "max_times" field.
+func (uuo *URLUpdateOne) SetMaxTimes(i int) *URLUpdateOne {
+	uuo.mutation.ResetMaxTimes()
+	uuo.mutation.SetMaxTimes(i)
+	return uuo
+}
+
+// SetNillableMaxTimes sets the "max_times" field if the given value is not nil.
+func (uuo *URLUpdateOne) SetNillableMaxTimes(i *int) *URLUpdateOne {
+	if i != nil {
+		uuo.SetMaxTimes(*i)
+	}
+	return uuo
+}
+
+// AddMaxTimes adds i to the "max_times" field.
+func (uuo *URLUpdateOne) AddMaxTimes(i int) *URLUpdateOne {
+	uuo.mutation.AddMaxTimes(i)
 	return uuo
 }
 
@@ -532,6 +644,34 @@ func (uuo *URLUpdateOne) sqlSave(ctx context.Context) (_node *Url, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: url.FieldPath,
+		})
+	}
+	if value, ok := uuo.mutation.CurrentTimes(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldCurrentTimes,
+		})
+	}
+	if value, ok := uuo.mutation.AddedCurrentTimes(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldCurrentTimes,
+		})
+	}
+	if value, ok := uuo.mutation.MaxTimes(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldMaxTimes,
+		})
+	}
+	if value, ok := uuo.mutation.AddedMaxTimes(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldMaxTimes,
 		})
 	}
 	if value, ok := uuo.mutation.ExpireAt(); ok {

@@ -27,9 +27,10 @@ Now Visit <https://longurl.long2ice.io/3FXrsHE>.
 
 ### Params
 
-- `url`: the url to be shorted.
-- `path`: the custom path for short url, can config allow or not.
-- `expire_at`: when the short url expire, can set default expire in config.
+- `url` (required): the url to be shorted.
+- `path` (optional): the custom path for short url, can config allow or not.
+- `expire_at` (optional): when the short url expire, can set default expire in config.
+- `max_times` (optional): max times access, shorted url will be invalid if reached.
 
 ## Deploy
 
@@ -47,7 +48,7 @@ url:
   length: 7                 # the path length
   allowCustomPath: true     # allow custom short url path
   expireSeconds: 2592000    # default expire seconds
-  unque: true               # same urls only generate one short url
+  unique: true               # same urls only generate one short url
 database:
   type: mysql
   dsn: root:123456@tcp(127.0.0.1:3306)/longurl?parseTime=true

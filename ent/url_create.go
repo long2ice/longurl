@@ -33,6 +33,34 @@ func (uc *URLCreate) SetPath(s string) *URLCreate {
 	return uc
 }
 
+// SetCurrentTimes sets the "current_times" field.
+func (uc *URLCreate) SetCurrentTimes(i int) *URLCreate {
+	uc.mutation.SetCurrentTimes(i)
+	return uc
+}
+
+// SetNillableCurrentTimes sets the "current_times" field if the given value is not nil.
+func (uc *URLCreate) SetNillableCurrentTimes(i *int) *URLCreate {
+	if i != nil {
+		uc.SetCurrentTimes(*i)
+	}
+	return uc
+}
+
+// SetMaxTimes sets the "max_times" field.
+func (uc *URLCreate) SetMaxTimes(i int) *URLCreate {
+	uc.mutation.SetMaxTimes(i)
+	return uc
+}
+
+// SetNillableMaxTimes sets the "max_times" field if the given value is not nil.
+func (uc *URLCreate) SetNillableMaxTimes(i *int) *URLCreate {
+	if i != nil {
+		uc.SetMaxTimes(*i)
+	}
+	return uc
+}
+
 // SetExpireAt sets the "expire_at" field.
 func (uc *URLCreate) SetExpireAt(t time.Time) *URLCreate {
 	uc.mutation.SetExpireAt(t)
@@ -147,6 +175,14 @@ func (uc *URLCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *URLCreate) defaults() {
+	if _, ok := uc.mutation.CurrentTimes(); !ok {
+		v := url.DefaultCurrentTimes
+		uc.mutation.SetCurrentTimes(v)
+	}
+	if _, ok := uc.mutation.MaxTimes(); !ok {
+		v := url.DefaultMaxTimes
+		uc.mutation.SetMaxTimes(v)
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := url.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
@@ -170,6 +206,12 @@ func (uc *URLCreate) check() error {
 		if err := url.PathValidator(v); err != nil {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Url.path": %w`, err)}
 		}
+	}
+	if _, ok := uc.mutation.CurrentTimes(); !ok {
+		return &ValidationError{Name: "current_times", err: errors.New(`ent: missing required field "Url.current_times"`)}
+	}
+	if _, ok := uc.mutation.MaxTimes(); !ok {
+		return &ValidationError{Name: "max_times", err: errors.New(`ent: missing required field "Url.max_times"`)}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Url.created_at"`)}
@@ -216,6 +258,22 @@ func (uc *URLCreate) createSpec() (*Url, *sqlgraph.CreateSpec) {
 			Column: url.FieldPath,
 		})
 		_node.Path = value
+	}
+	if value, ok := uc.mutation.CurrentTimes(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldCurrentTimes,
+		})
+		_node.CurrentTimes = value
+	}
+	if value, ok := uc.mutation.MaxTimes(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: url.FieldMaxTimes,
+		})
+		_node.MaxTimes = value
 	}
 	if value, ok := uc.mutation.ExpireAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

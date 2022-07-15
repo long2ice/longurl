@@ -107,6 +107,20 @@ func Path(v string) predicate.Url {
 	})
 }
 
+// CurrentTimes applies equality check predicate on the "current_times" field. It's identical to CurrentTimesEQ.
+func CurrentTimes(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// MaxTimes applies equality check predicate on the "max_times" field. It's identical to MaxTimesEQ.
+func MaxTimes(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxTimes), v))
+	})
+}
+
 // ExpireAt applies equality check predicate on the "expire_at" field. It's identical to ExpireAtEQ.
 func ExpireAt(v time.Time) predicate.Url {
 	return predicate.Url(func(s *sql.Selector) {
@@ -340,6 +354,158 @@ func PathEqualFold(v string) predicate.Url {
 func PathContainsFold(v string) predicate.Url {
 	return predicate.Url(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldPath), v))
+	})
+}
+
+// CurrentTimesEQ applies the EQ predicate on the "current_times" field.
+func CurrentTimesEQ(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// CurrentTimesNEQ applies the NEQ predicate on the "current_times" field.
+func CurrentTimesNEQ(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// CurrentTimesIn applies the In predicate on the "current_times" field.
+func CurrentTimesIn(vs ...int) predicate.Url {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Url(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCurrentTimes), v...))
+	})
+}
+
+// CurrentTimesNotIn applies the NotIn predicate on the "current_times" field.
+func CurrentTimesNotIn(vs ...int) predicate.Url {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Url(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCurrentTimes), v...))
+	})
+}
+
+// CurrentTimesGT applies the GT predicate on the "current_times" field.
+func CurrentTimesGT(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// CurrentTimesGTE applies the GTE predicate on the "current_times" field.
+func CurrentTimesGTE(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// CurrentTimesLT applies the LT predicate on the "current_times" field.
+func CurrentTimesLT(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// CurrentTimesLTE applies the LTE predicate on the "current_times" field.
+func CurrentTimesLTE(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCurrentTimes), v))
+	})
+}
+
+// MaxTimesEQ applies the EQ predicate on the "max_times" field.
+func MaxTimesEQ(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxTimes), v))
+	})
+}
+
+// MaxTimesNEQ applies the NEQ predicate on the "max_times" field.
+func MaxTimesNEQ(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMaxTimes), v))
+	})
+}
+
+// MaxTimesIn applies the In predicate on the "max_times" field.
+func MaxTimesIn(vs ...int) predicate.Url {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Url(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMaxTimes), v...))
+	})
+}
+
+// MaxTimesNotIn applies the NotIn predicate on the "max_times" field.
+func MaxTimesNotIn(vs ...int) predicate.Url {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Url(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMaxTimes), v...))
+	})
+}
+
+// MaxTimesGT applies the GT predicate on the "max_times" field.
+func MaxTimesGT(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMaxTimes), v))
+	})
+}
+
+// MaxTimesGTE applies the GTE predicate on the "max_times" field.
+func MaxTimesGTE(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMaxTimes), v))
+	})
+}
+
+// MaxTimesLT applies the LT predicate on the "max_times" field.
+func MaxTimesLT(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMaxTimes), v))
+	})
+}
+
+// MaxTimesLTE applies the LTE predicate on the "max_times" field.
+func MaxTimesLTE(v int) predicate.Url {
+	return predicate.Url(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMaxTimes), v))
 	})
 }
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"entgo.io/ent/dialect/sql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/long2ice/longurl/config"
 	"github.com/long2ice/longurl/db"
@@ -16,9 +17,10 @@ import (
 var UrlConfig = config.UrlConfig
 
 type GenerateShortURL struct {
-	URL      string    `form:"url" validate:"required" example:"https://github.com/long2ice/longurl"`
-	ExpireAt time.Time `form:"expire_at"`
-	Path     string    `form:"path" example:"longurl"`
+	URL      string    `json:"url" validate:"required" example:"https://github.com/long2ice/longurl"`
+	ExpireAt time.Time `json:"expire_at"`
+	Path     string    `json:"path" example:"longurl"`
+	MaxTimes int       `json:"max_times" example:"1"`
 }
 
 func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
@@ -30,6 +32,17 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 			})
 		}
 		if err == nil {
+			u := fu.Update()
+			if !g.ExpireAt.IsZero() {
+				u.SetExpireAt(g.ExpireAt)
+			}
+			if g.Path != "" {
+				u.SetPath(g.Path)
+			}
+			if g.MaxTimes != 0 {
+				u.SetMaxTimes(g.MaxTimes)
+			}
+			u.SaveX(c.Context())
 			return c.JSON(fiber.Map{
 				"url": utils.FormatPath(fu.Path),
 			})
@@ -50,7 +63,7 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 		}
 	}
 
-	obj := db.Client.Url.Create().SetURL(g.URL).SetPath(g.Path)
+	obj := db.Client.Url.Create().SetURL(g.URL).SetPath(g.Path).SetMaxTimes(g.MaxTimes)
 	if g.ExpireAt.Unix() > 0 {
 		if UrlConfig.ExpireSeconds != nil {
 			if g.ExpireAt.Sub(time.Now()).Seconds() > float64(*UrlConfig.ExpireSeconds) {
@@ -79,12 +92,19 @@ type VisitURL struct {
 }
 
 func (v *VisitURL) Handler(c *fiber.Ctx) error {
-	u, err := db.Client.Url.Query().Where(url.Path(v.Path), url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil())).First(c.Context())
+	u, err := db.Client.Url.Query().Where(
+		url.Path(v.Path),
+		url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil()),
+		url.Or(url.MaxTimesEQ(0), func(selector *sql.Selector) {
+			selector.Where(sql.ColumnsGT(url.FieldMaxTimes, url.FieldCurrentTimes))
+		}),
+	).First(c.Context())
 	if err != nil {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 	if (u.ExpireAt != nil && u.ExpireAt.After(time.Now())) || u.ExpireAt == nil {
 		v.createVisitLog(c, u)
+		u.Update().AddCurrentTimes(1).SaveX(c.Context())
 		return c.Redirect(u.URL)
 	}
 	return c.SendStatus(fiber.StatusNotFound)

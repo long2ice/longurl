@@ -20,6 +20,10 @@ type Url struct {
 	URL string `json:"url,omitempty"`
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
+	// CurrentTimes holds the value of the "current_times" field.
+	CurrentTimes int `json:"current_times,omitempty"`
+	// MaxTimes holds the value of the "max_times" field.
+	MaxTimes int `json:"max_times,omitempty"`
 	// ExpireAt holds the value of the "expire_at" field.
 	ExpireAt *time.Time `json:"expire_at,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -52,7 +56,7 @@ func (*Url) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case url.FieldID:
+		case url.FieldID, url.FieldCurrentTimes, url.FieldMaxTimes:
 			values[i] = new(sql.NullInt64)
 		case url.FieldURL, url.FieldPath:
 			values[i] = new(sql.NullString)
@@ -90,6 +94,18 @@ func (u *Url) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field path", values[i])
 			} else if value.Valid {
 				u.Path = value.String
+			}
+		case url.FieldCurrentTimes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_times", values[i])
+			} else if value.Valid {
+				u.CurrentTimes = int(value.Int64)
+			}
+		case url.FieldMaxTimes:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_times", values[i])
+			} else if value.Valid {
+				u.MaxTimes = int(value.Int64)
 			}
 		case url.FieldExpireAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -141,6 +157,10 @@ func (u *Url) String() string {
 	builder.WriteString(u.URL)
 	builder.WriteString(", path=")
 	builder.WriteString(u.Path)
+	builder.WriteString(", current_times=")
+	builder.WriteString(fmt.Sprintf("%v", u.CurrentTimes))
+	builder.WriteString(", max_times=")
+	builder.WriteString(fmt.Sprintf("%v", u.MaxTimes))
 	if v := u.ExpireAt; v != nil {
 		builder.WriteString(", expire_at=")
 		builder.WriteString(v.Format(time.ANSIC))
