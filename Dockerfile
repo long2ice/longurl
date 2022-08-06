@@ -16,7 +16,7 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-COPY --from=web-builder /src/awesome-web/build /build/static
+COPY --from=web-builder /src/longurl-web/build /build/static
 RUN go build -o app ./
 
 FROM scratch
