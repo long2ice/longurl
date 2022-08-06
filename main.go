@@ -7,5 +7,6 @@ import (
 )
 
 func main() {
+	app := CreateApp()
 	log.Fatal(app.Listen(fmt.Sprintf("%s:%s", config.ServerConfig.Host, config.ServerConfig.Port)))
 }

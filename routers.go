@@ -7,16 +7,11 @@ import (
 
 var (
 	generateURL = router.New(
-		&api.GenerateShortURL{},
+		api.GenerateShortURL,
 		router.Summary("Generate short url"),
 	)
 	visitURL = router.New(
-		&api.VisitURL{},
+		api.VisitURL,
 		router.Summary("Visit short url"),
 	)
 )
-
-func init() {
-	app.Post("/", generateURL)
-	app.Get("/:path", visitURL)
-}

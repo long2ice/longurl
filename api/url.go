@@ -16,16 +16,16 @@ import (
 
 var UrlConfig = config.UrlConfig
 
-type GenerateShortURL struct {
+type GenerateShortURLReq struct {
 	URL      string    `json:"url" validate:"required" example:"https://github.com/long2ice/longurl"`
 	ExpireAt time.Time `json:"expire_at"`
 	Path     string    `json:"path" example:"longurl"`
 	MaxTimes int       `json:"max_times" example:"1"`
 }
 
-func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
+func GenerateShortURL(c *fiber.Ctx, req GenerateShortURLReq) error {
 	if UrlConfig.Unique {
-		fu, err := db.Client.Url.Query().Where(url.URL(g.URL), url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil())).First(c.Context())
+		fu, err := db.Client.Url.Query().Where(url.URL(req.URL), url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil())).First(c.Context())
 		if err != nil && !ent.IsNotFound(err) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": err.Error(),
@@ -33,14 +33,14 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 		}
 		if err == nil {
 			u := fu.Update()
-			if !g.ExpireAt.IsZero() {
-				u.SetExpireAt(g.ExpireAt)
+			if !req.ExpireAt.IsZero() {
+				u.SetExpireAt(req.ExpireAt)
 			}
-			if g.Path != "" {
-				u.SetPath(g.Path)
+			if req.Path != "" {
+				u.SetPath(req.Path)
 			}
-			if g.MaxTimes != 0 {
-				u.SetMaxTimes(g.MaxTimes)
+			if req.MaxTimes != 0 {
+				u.SetMaxTimes(req.MaxTimes)
 			}
 			u.SaveX(c.Context())
 			return c.JSON(fiber.Map{
@@ -48,13 +48,13 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 			})
 		}
 	}
-	if g.Path == "" {
+	if req.Path == "" {
 		id, err := sonyflake.SF.NextID()
 		if err != nil {
 			return err
 		}
 		str := utils.Encode(id)
-		g.Path = str[len(str)-UrlConfig.Length:]
+		req.Path = str[len(str)-UrlConfig.Length:]
 	} else {
 		if !UrlConfig.AllowCustomPath {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -63,16 +63,16 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 		}
 	}
 
-	obj := db.Client.Url.Create().SetURL(g.URL).SetPath(g.Path).SetMaxTimes(g.MaxTimes)
-	if g.ExpireAt.Unix() > 0 {
+	obj := db.Client.Url.Create().SetURL(req.URL).SetPath(req.Path).SetMaxTimes(req.MaxTimes)
+	if req.ExpireAt.Unix() > 0 {
 		if UrlConfig.ExpireSeconds != nil {
-			if g.ExpireAt.Sub(time.Now()).Seconds() > float64(*UrlConfig.ExpireSeconds) {
+			if req.ExpireAt.Sub(time.Now()).Seconds() > float64(*UrlConfig.ExpireSeconds) {
 				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"message": "expire_at is larger than config value",
 				})
 			}
 		}
-		obj = obj.SetExpireAt(g.ExpireAt)
+		obj = obj.SetExpireAt(req.ExpireAt)
 	} else {
 		if UrlConfig.ExpireSeconds != nil {
 			obj = obj.SetExpireAt(time.Now().Add(*UrlConfig.ExpireSeconds * time.Second))
@@ -83,17 +83,17 @@ func (g *GenerateShortURL) Handler(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(fiber.Map{
-		"url": utils.FormatPath(g.Path),
+		"url": utils.FormatPath(req.Path),
 	})
 }
 
-type VisitURL struct {
+type VisitURLReq struct {
 	Path string `uri:"path"`
 }
 
-func (v *VisitURL) Handler(c *fiber.Ctx) error {
+func VisitURL(c *fiber.Ctx, req VisitURLReq) error {
 	u, err := db.Client.Url.Query().Where(
-		url.Path(v.Path),
+		url.Path(req.Path),
 		url.Or(url.ExpireAtGT(time.Now()), url.ExpireAtIsNil()),
 		url.Or(url.MaxTimesEQ(0), func(selector *sql.Selector) {
 			selector.Where(sql.ColumnsGT(url.FieldMaxTimes, url.FieldCurrentTimes))
@@ -103,13 +103,13 @@ func (v *VisitURL) Handler(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 	if (u.ExpireAt != nil && u.ExpireAt.After(time.Now())) || u.ExpireAt == nil {
-		v.createVisitLog(c, u)
+		createVisitLog(c, u)
 		u.Update().AddCurrentTimes(1).SaveX(c.Context())
 		return c.Redirect(u.URL)
 	}
 	return c.SendStatus(fiber.StatusNotFound)
 }
-func (v *VisitURL) createVisitLog(c *fiber.Ctx, url *ent.Url) {
+func createVisitLog(c *fiber.Ctx, url *ent.Url) {
 	userAgent := c.Request().Header.UserAgent()
 	ua := user_agent.New(string(userAgent))
 	engineName, engineVersion := ua.Engine()
