@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"time"
@@ -37,7 +36,7 @@ func init() {
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("Fatal error config file: %w \n", err))
+		log.Fatalf("Fatal error config file: %v ", err)
 	}
 	var c Config
 	err = viper.Unmarshal(&c)

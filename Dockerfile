@@ -20,9 +20,8 @@ COPY --from=web-builder /src/longurl-web/build /build/static
 RUN go build -o app ./
 
 FROM scratch
-RUN mkdir -p /app
 WORKDIR /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /build/app /app/
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
-ENTRYPOINT ["/app/app"]
+CMD ["/app/app"]
