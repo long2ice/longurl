@@ -19,7 +19,7 @@ COPY . .
 COPY --from=web-builder /src/longurl-web/build /build/static
 RUN go build -o app ./
 
-FROM golang
+FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /build/app /
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
