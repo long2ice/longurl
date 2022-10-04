@@ -57,7 +57,7 @@ database:
 Then run with `docker`.
 
 ```shell
-docker run -d -p 3000:3000 --name longurl -v /config.yaml:/config.yaml ghcr.io/long2ice/longurl/longurl
+docker run -d -p 3000:3000 --name longurl -v /config.yaml:/config/config.yaml ghcr.io/long2ice/longurl/longurl
 ```
 
 You can visit <http://localhost:3000/docs> to see the API docs.
