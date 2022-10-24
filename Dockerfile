@@ -6,7 +6,6 @@ RUN git clone https://github.com/long2ice/longurl-web.git
 RUN cd longurl-web && npm i && npm run build
 
 FROM golang AS builder
-MAINTAINER long2ice "long2ice@gmail.com"
 ENV GO111MODULE=on
 ENV GOOS=linux
 ENV GOARCH=$GOARCH
