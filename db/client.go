@@ -4,6 +4,7 @@ import (
 	"context"
 	"entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/long2ice/longurl/config"
 	"github.com/long2ice/longurl/ent"
 	"github.com/long2ice/longurl/ent/migrate"

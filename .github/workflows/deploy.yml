@@ -10,26 +10,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build and Publish
         uses: VaultVulp/gp-docker-action@1.6.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           image-name: longurl
-          custom-args: --platform=linux/arm64,linux/amd64
   deploy:
     runs-on: ubuntu-latest
     needs:
       - build
     steps:
       - name: Deploy
-        uses: appleboy/ssh-action@master
+        uses: steebchen/kubectl@v2.0.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd /root/docker/longurl/
-            docker compose pull
-            docker compose up -d
+          config: ${{ secrets.KUBE_CONFIG }}
+          command: rollout restart deployment longurl
